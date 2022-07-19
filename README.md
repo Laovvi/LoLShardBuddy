@@ -1,0 +1,1 @@
+LoLShardBuddy is a program being developed take lists of League of Legends skins (total, obtainable, owned), run statistical analysis on the real and probable outcomes of upgrading, disenchanting, or rerolling skin shards.
