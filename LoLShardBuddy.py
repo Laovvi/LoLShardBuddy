@@ -1,17 +1,18 @@
 import numpy as np
 import pandas as pd
-champs = []
-not_included = []
-main_dict = {}
 
-def update():
+def initialize():
+    champs = []
+    not_included = []
+    main_dict = {}
+    # Initialize version, champ list, skin list
     # Load list of champions.
     with open('..\Documents\LoLShardBuddy\champion_list.txt') as f:
         champ = f.readlines() 
     champs = []
     for i in champ:
         champs = champs + (i.split(','))
-        champs = ['Ahri']
+        champs = ['Ahri'] #REMOVE after testing
 
     # Load list of skins not included in counts of skins obtainable by reroll.
     with open('..\Documents\LoLShardBuddy\listnot_included.txt') as f:
@@ -27,7 +28,10 @@ def update():
     # is then appended to a main nested dict with all champions.
     for i in champs:
         try:
-            df = pd.read_json("https://ddragon.leagueoflegends.com/cdn/12.7.1/data/en_US/champion/"+str(i)+".json")
+            with open('..\Documents\LoLShardBuddy\\gamever.txt') as f:
+                version = f.readlines() 
+            df = pd.read_json("https://ddragon.leagueoflegends.com/cdn/"+str(version[0])\
+                +"/data/en_US/champion/"+str(i)+".json")
             temp_list = []
             temp_dict = {}
             for j in df['data'][i]['skins']:
@@ -35,15 +39,18 @@ def update():
             del temp_list[0]
             for j in temp_list:
                 if j.lower() in not_included:
-                    temp_dict[j] = {'incl_in_calc':False, 'value':0, 'owned':True}
+                    temp_dict[j] = {'incl_in_calc':False, 'value':0, 'owned':False}
                 else:
-                    temp_dict[j] = {'incl_in_calc':True, 'value':0, 'owned':True}
+                    temp_dict[j] = {'incl_in_calc':True, 'value':0, 'owned':False}
         except:
             pass
-        main_dict[i] = temp_dict
-    return champs,main_dict
+    main_dict[i] = temp_dict
+    return champs, main_dict, temp_list
+
+champs,main_dict,temp_list = initialize()
 
 def add_to_owned():
+    #Takes arguments to add to owned list.
     while True:
         temp_champ = input('Enter the name of the champion (Q to quit): ')
         if str(temp_champ).upper() == 'Q':
@@ -53,14 +60,34 @@ def add_to_owned():
             if temp_skin.upper() == 'Q':
                 break
             else:
-                if temp_skin in main_dict[temp_champ]:
-                    print(temp_skin)
+                if temp_skin in temp_list:
+                    main_dict[temp_champ][temp_skin]['owned'] = True
                 else:
                     print("Skin not found.")
         else:
             print('Champion not found.')
 
-champs,main_dict = update()
-print(main_dict)
-print(champs)
-add_to_owned()
+initialize()
+print('Welcome to LoLSkinBuddy!')
+
+while True:
+    print()
+    print('I = Initialize requisite files')
+    print('U = Update requisite files')
+    print('A = Add Skins to Owned')
+    print('G = Get Shard Use Recommendations')
+    print('Q = Quit')
+    print()
+    command = input('What would you like to do?: ')
+    if command.upper() == 'I':
+        initialize()
+    if command.upper() == 'U':
+        initialize()
+    if command.upper() == 'A':
+        add_to_owned()
+    if command.upper() == 'G':
+        pass
+    if command.upper() == 'Q':
+        print('Goodbye :)')
+        break
+
