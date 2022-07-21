@@ -69,6 +69,13 @@ def add_to_owned():
         else:
             print('Champion not found.')
 
+def update():
+    version1 = input('Enter version number (e.g. 12.4.1; Q to quit: ')
+    if version1.upper() != 'Q':
+        with open(str(Path.Path(__file__).parent)+'\gamever.txt', 'w') as f:
+            f.write(version1)
+        initialize()
+
 initialize()
 print('Welcome to LoLSkinBuddy!')
 
@@ -84,7 +91,7 @@ while True:
     if command.upper() == 'I':
         initialize()
     if command.upper() == 'U':
-        initialize()
+        update()
     if command.upper() == 'A':
         add_to_owned()
     if command.upper() == 'G':
