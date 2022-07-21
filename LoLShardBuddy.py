@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import pathlib as Path
 
 def initialize():
     champs = []
@@ -7,7 +8,7 @@ def initialize():
     main_dict = {}
     # Initialize version, champ list, skin list
     # Load list of champions.
-    with open('..\Documents\LoLShardBuddy\champion_list.txt') as f:
+    with open(str(Path.Path(__file__).parent)+'\champion_list.txt') as f:
         champ = f.readlines() 
     champs = []
     for i in champ:
@@ -15,10 +16,11 @@ def initialize():
         champs = ['Ahri'] #REMOVE after testing
 
     # Load list of skins not included in counts of skins obtainable by reroll.
-    with open('..\Documents\LoLShardBuddy\listnot_included.txt') as f:
+    with open(str(Path.Path(__file__).parent)+'\listnot_included.txt') as f:
         not_included1 = f.readlines()
     for i in not_included1:
-        not_included = not_included + (i.split(',').lower())
+        not_included = []
+        not_included = not_included + [(i.strip().lower())]
 
     main_dict = {}
     # Takes champion list, iterates through pulling JSON file from ddragon for champion, \
@@ -28,7 +30,7 @@ def initialize():
     # is then appended to a main nested dict with all champions.
     for i in champs:
         try:
-            with open('..\Documents\LoLShardBuddy\\gamever.txt') as f:
+            with open(str(Path.Path(__file__).parent)+'\gamever.txt') as f:
                 version = f.readlines() 
             df = pd.read_json("https://ddragon.leagueoflegends.com/cdn/"+str(version[0])\
                 +"/data/en_US/champion/"+str(i)+".json")
